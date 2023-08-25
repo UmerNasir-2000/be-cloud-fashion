@@ -10,6 +10,8 @@ COPY package*.json ./
 # Install app dependencies
 RUN yarn install
 
+RUN npx prisma generate
+
 # Bundle app source
 COPY . .
 

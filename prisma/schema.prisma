@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id              String   @id @default(uuid())
+  title           String   @unique @db.VarChar(50)
+  slug            String   @unique @db.VarChar(50)
+  vendorId        String   @map("vendor_id")
+  type            String   @db.VarChar(100)
+  description     String   @db.Text
+  inStock         Boolean  @map("in_stock")
+  hasDiscount     Boolean  @map("has_discount")
+  discountPercent Decimal  @map("discount_percent") @db.Decimal(10, 2)
+  quantity        Int
+  price           Decimal  @db.Decimal(10, 2)
+  images          Json
+  tags            Json
+  publishedAt     DateTime @map("published_at")
+  isPopular       Boolean  @map("is_popular")
+  sizes           Json
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  vendors         Vendor   @relation(fields: [vendorId], references: [id])
+
+  @@map("products")
+}
+
+model Vendor {
+  id            String    @id @default(uuid())
+  title         String    @unique
+  slug          String    @unique
+  featuredImage String    @map("featured_image")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  products      Product[]
+
+  @@map("vendors")
+}
